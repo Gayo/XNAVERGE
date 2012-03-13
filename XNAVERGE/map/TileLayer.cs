@@ -19,10 +19,12 @@ namespace XNAVERGE {
                 blend_color.R = blend_color.G = blend_color.B = blend_color.A = (byte)(value * 0xFF);
             }
         }
+        public bool base_layer; // the base layer is rendered differently in VERGE
         protected Color blend_color;
 
         public TileLayer(int w, int h, Vector2 parallax_vector, String layer_name)
             : base(parallax_vector, layer_name, BlendState.AlphaBlend) {
+            base_layer = false;
             _width = w;
             _height = h;
             data = new int[w][];
@@ -54,15 +56,7 @@ namespace XNAVERGE {
             }
         }
 
-        public override void DrawBaseLayer() {
-            __Draw(false);
-        }
-
         public override void Draw() {
-            __Draw(true);
-        }
-
-        public void __Draw(Boolean isOverlayLayer) {
             SpriteBatch spritebatch = VERGEGame.game.spritebatch;
 
             int min_x, min_y, tiles_per_row, tiles_per_column;
@@ -86,7 +80,7 @@ namespace XNAVERGE {
                 dest_rect.X = min_x * dest_rect.Width;
                 for (int x = 0; x < tiles_per_row; x++) {
 
-                    if (isOverlayLayer && data[min_x + x][min_y + y] == 0) {
+                    if (!base_layer && data[min_x + x][min_y + y] == 0) {
 
                     }
                     else {
@@ -101,5 +95,7 @@ namespace XNAVERGE {
 
             spritebatch.End();
         }
+
+        
     }
 }

@@ -88,8 +88,6 @@ namespace XNAVERGE {
         public RenderLayer(String layer_name) : this(VERGEMap.NEUTRAL_PARALLAX, layer_name) {}
 
         public abstract void Draw();
-        public virtual void DrawBaseLayer() {
-            Draw();
-        }
+
     }
 }

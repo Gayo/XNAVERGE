@@ -8,18 +8,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace XNAVERGE {
     public class RenderStack {
-        private VERGEMap map;
-        public RenderLayer[] list;
+        public List<RenderLayer> list;
 
-        public RenderStack(VERGEMap vmap, String rstring) : this(vmap, rstring, ',') {} // MAP file renderstrings are always comma-delimited
+        public RenderStack() { // Empty renderstack
+            list = new List<RenderLayer>();
+        }
 
-        public RenderStack(VERGEMap vmap, String rstring, Char delim) {
+        public RenderStack(VERGEMap map, String rstring) : this(map, rstring, ',') {} // MAP file renderstrings are always comma-delimited
+
+        public RenderStack(VERGEMap map, String rstring, Char delim) {
             int cur_pos, next_pos, len, layer_number;
+            bool added_base_layer = false;
             String str = rstring.Trim().ToUpper();            
             String cur_token;
             RenderLayer cur_layer;
-            Queue<RenderLayer> layer_queue = new Queue<RenderLayer>(); // Temporary loading queue
-            map = vmap;
+            list = new List<RenderLayer>();
                 
             cur_pos = 0;
             len = str.Length;
@@ -31,11 +34,11 @@ namespace XNAVERGE {
                 switch (cur_token) {
                     case "R": // rendering script layer (defaults to hook_render and fixed parallax)
                         cur_layer = new ScriptRenderLayer();
-                        layer_queue.Enqueue(cur_layer);
+                        list.Add(cur_layer);
                         break;
                     case "E": // entity layer
                         cur_layer = new EntityLayer();
-                        layer_queue.Enqueue(cur_layer);
+                        list.Add(cur_layer);
                         break;
                     default: // tile layer
                         try {
@@ -44,16 +47,14 @@ namespace XNAVERGE {
                         }
                         catch (Exception) { throw new MalformedRenderstringException(rstring); } // not a positive integer                        
                         cur_layer = map.tiles[layer_number - 1];
-                        layer_queue.Enqueue(cur_layer);
+                        if (!added_base_layer) {
+                            ((TileLayer)cur_layer).base_layer = true;
+                            added_base_layer = true;
+                        }
+                        list.Add(cur_layer);                        
                         break;                        
                 }
                 cur_pos = next_pos + 1;
-            }
-
-            // Collections are slow, so we'll shift the layers into a fixed array now that we've got them all.
-            list = new RenderLayer[layer_queue.Count];
-            for (int count = 0; count < list.Length; count++) {
-                list[count] = layer_queue.Dequeue();
             }
         }
 
@@ -66,15 +67,8 @@ namespace XNAVERGE {
         }
 
         public void Draw() {
-            for( int i = 0; i < list.Length; i++ ) {
-                if( list[i].visible ) {
-
-                    if( i == 0 ) {
-                        list[i].DrawBaseLayer();
-                    } else {
-                        list[i].Draw();
-                    }
-                }
+            for( int i = 0; i < list.Count; i++ ) {
+                if( list[i].visible ) list[i].Draw();                                    
             }
         }
     }
