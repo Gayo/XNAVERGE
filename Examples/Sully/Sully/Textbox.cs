@@ -71,7 +71,7 @@ namespace Sully {
 
 
 
-            McgLayer l = game.renderstack.GetLayer( "textbox" );
+            McgLayer l = game._renderstack.GetLayer( "textbox" );
 
             RenderDelegate a1 = ( int x, int y ) => {
                 //game.spritebatch.Draw( inactiveBgColor, mainBox.color_bounds, Color.White * .5f );

@@ -40,7 +40,7 @@ namespace Sully {
                 color_bounds = new Rectangle( x, y, image.Width, image.Height );
                 color_bounds.Inflate( -2, -2 );
 
-                McgLayer l = _.sg.renderstack.GetLayer( "menu" );
+                McgLayer l = _.sg._renderstack.GetLayer( "menu" );
                 rendernode = l.AddNode(
                     new McgNode( onDraw, l, start_x, start_y, final_x, final_y, Menu.delay )
                 );

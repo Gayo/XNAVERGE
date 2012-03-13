@@ -31,10 +31,11 @@ namespace XNAVERGE {
 
         internal BoundedSpace<Entity> entity_space;
 
-        public McGrenderStack renderstack;
+        public RenderStack renderstack;
+        public McGrenderStack _renderstack;
 
         public void setMcGrender( McGrenderStack mcg ) {
-            renderstack = mcg;
+            _renderstack = mcg;
         }
 
         public System.Diagnostics.Stopwatch stopWatch;
@@ -61,6 +62,7 @@ namespace XNAVERGE {
             
             // Set up graphics
             graphics = new GraphicsDeviceManager(this);
+            renderstack = new RenderStack(); 
 
             // Uncomment this line to remove fps throttling: 
             graphics.SynchronizeWithVerticalRetrace = false;
@@ -81,6 +83,8 @@ namespace XNAVERGE {
             player = null;
             player_controllable_stack = new Stack<bool>();
             player_controllable = PLAYER_CONTROLLABLE_DEFAULT;
+            entities_paused_stack = new Stack<bool>();
+            entities_paused = false;
             player_tile_obstruction = true;
             default_entity_handler = Default_Handlers.omnibus_vergestyle_handler;
             action_queue = new Queue<Action>();
